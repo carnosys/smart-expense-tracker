@@ -1,0 +1,25 @@
+#secrets
+.env
+.env.*
+
+# python junk
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# tooling
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# git + editor
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# docker-compose files (optional - usually fine to keep)
+# docker-compose.yml
