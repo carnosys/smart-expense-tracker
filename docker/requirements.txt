@@ -5,3 +5,4 @@ uvicorn
 SQLAlchemy
 psycopg[binary]
 alembic
+pwdlib

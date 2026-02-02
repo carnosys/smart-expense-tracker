@@ -50,3 +50,4 @@ class Settings():
         return (f"postgres+psycop://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}")
 
 
+settings = Settings()
