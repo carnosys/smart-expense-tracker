@@ -1,0 +1,20 @@
+from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy import Float, Integer, String, Time, Text, ForeignKey, CheckConstraint
+from db.base import Base
+import datetime
+
+class Expense(Base):
+    __tablename__="expenses"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id:Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id", ondelete="CASCADE"))
+    amount:Mapped[float] = mapped_column(Float, CheckConstraint("amount > 0"))
+    occurred_at:Mapped[datetime.time] = mapped_column(Time)
+    note : Mapped[str]= mapped_column(Text)
+
+    @validates("amount")
+    def validate_amount(self, key, value):
+        if value<0:
+            raise ValueError("amount must be greater than 0")
+        return value    
