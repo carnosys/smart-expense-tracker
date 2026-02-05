@@ -11,6 +11,7 @@ class Category(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     name: Mapped[str] = mapped_column(String(20))
+    description : Mapped[str] = mapped_columns(Text)
 
     @validates("name")
     def validate_name(self, key, value):

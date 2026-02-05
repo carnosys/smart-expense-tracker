@@ -1,4 +1,4 @@
-from config import settings
+from core.config import settings
 from typing import Optional 
 
 import jwt 
@@ -20,19 +20,23 @@ def hash_password(plaintext:str)->str:
 def verify_hashed_password(plaintext:str, hashed_password:str)->bool:
     return password_hash.verify(plaintext,hashed_password)
 
-oauth2_scheme = OAuth2PasswordBearer(token="/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 #JWT creation
 
-def create_access_token(subject: str, expires_delta: Optional[timedelta] = None):
-    expire = timedate.now(timezone.utc) + (expires_delta  or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+def create_access_token(subject: str, expires_delta: Optional[timedelta] = None) -> str:
+    expire = datetime.now(timezone.utc) + (
+        expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     payload = {
         "sub":subject,
         "exp":expire,
-        "iat":timedate.now(timezone.utc)
+        "iat":datetime.now(timezone.utc)
     }
 
-    token = jwt.encode(payload, algorithm = settings.JWT_ALGORITHM, key = settings.JWT_SECRET)
+    token = jwt.encode(
+        payload, algorithm=settings.JWT_ALGORITHM, key=settings.JWT_SECRET
+    )
     return token
 
 
@@ -40,12 +44,14 @@ def create_access_token(subject: str, expires_delta: Optional[timedelta] = None)
 
 def decode_access_token(token: str):
     try:
-        payload = jwt.decode(token, algorithms=settings.JWT_ALGORITHM, key = settings.JWT_SECRET)
+        payload = jwt.decode(
+            token, key=settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM]
+        )
         return payload
     except InvalidTokenError:
         raise HTTPException(
            status_code = status.HTTP_401_UNAUTHORIZED,
-           details = "Could not verify credentials",
+           detail = "Could not verify credentials",
            headers ={"WWW-Authenticate":"Bearer"}
         )    
 
@@ -53,13 +59,13 @@ def decode_access_token(token: str):
  
 #Current user dependency
 
-async def get_current_user(token: str = Depends(outh2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     payload = decode_access_token(token)
     username = payload.get("sub")
     if not username:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            details="Token missing subject",
-                            headers={"WWW-Authentication" :"Bearer"}
+                            detail="Token missing subject",
+                            headers={"WWW-Authenticate" :"Bearer"}
                             )
  
 
@@ -69,8 +75,8 @@ async def get_current_user(token: str = Depends(outh2_scheme)):
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            details="User does not exist",
-            headers={"WWW-Authentication":"Bearer"}
+            detail="User does not exist",
+            headers={"WWW-Authenticate":"Bearer"}
         )
     
     return user    

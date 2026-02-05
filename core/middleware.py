@@ -13,13 +13,13 @@ def register_middleware(app: FastAPI):
 
 
     @app.middleware("http")
-    def request_id_and_logging(request: Request, call_next):
+    async def request_id_and_logging(request: Request, call_next):
         
         request_id= request.headers.get("X-Request-ID") or str(uuid.uuid4()) 
         request.state.request_id = request_id
 
         start = time.perf_counter()
-        response = call_next(request)
+        response = await call_next(request)
         duration = round((time.perf_counter()-start)*1000,2)
         response.headers["X-Request-ID"]=request_id 
 
@@ -28,7 +28,7 @@ def register_middleware(app: FastAPI):
             request.method,
             request.url.path,
             response.status_code,
-            duration_ms,
+            duration,
             request_id,
         )
 

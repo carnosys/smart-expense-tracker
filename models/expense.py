@@ -11,10 +11,17 @@ class Expense(Base):
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id", ondelete="CASCADE"))
     amount:Mapped[float] = mapped_column(Float, CheckConstraint("amount > 0"))
     occurred_at:Mapped[datetime.time] = mapped_column(Time)
+    title : Mapped[str] = mapped_column(String(50))
     note : Mapped[str]= mapped_column(Text)
 
     @validates("amount")
     def validate_amount(self, key, value):
         if value<0:
             raise ValueError("amount must be greater than 0")
+        return value    
+    
+    @validates("title")
+    def validates_title(self, key, value):
+        if len(value)==0:
+            raise ValueError("Title cannot be empty")
         return value    
