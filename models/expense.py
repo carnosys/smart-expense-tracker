@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, validates
-from sqlalchemy import Float, Integer, String, Time, Text, ForeignKey, CheckConstraint
+from sqlalchemy import Float, Integer, String, DateTime, Text, ForeignKey, CheckConstraint
 from db.base import Base
-import datetime
+import datetime 
 
 class Expense(Base):
     __tablename__="expenses"
@@ -10,7 +10,7 @@ class Expense(Base):
     user_id:Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id", ondelete="CASCADE"))
     amount:Mapped[float] = mapped_column(Float, CheckConstraint("amount > 0"))
-    occurred_at:Mapped[datetime.time] = mapped_column(Time)
+    occurred_at:Mapped[datetime.datetime] = mapped_column(DateTime, default = datetime.datetime.now(datetime.UTC))
     title : Mapped[str] = mapped_column(String(50))
     note : Mapped[str]= mapped_column(Text)
 
