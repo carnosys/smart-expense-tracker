@@ -1,25 +1,25 @@
 from models.expense import Expense
 from models.user import User
 from models.categories import Category
-from .categories import list_for_user
-from .expenses import list_for_user
+import categories
+import expenses
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, desc
+from sqlalchemy import select, func, desc, extract, _and
 from datetime import datetime
+from models.user import User
 
 async def monthly_summary(db: AsyncSession, user: User, month: int)-> float:
-    query = select(Expense).where(Expense.occurred_at.month == month)
-    results = db.execute(query)
+    query = select(Expense).where(_and(extract("month",Expense.occurred_at) == month, User.id == user.id))
+    results = await db.execute(query)
     total_expenditure = sum(expense.amount for expense in results.scalars().all())
     return total_expenditure
 
 
-
 async def category_breakdown(db: AsyncSession, user: User, from_date : datetime | None = None , to_date: datetime | None = None):
-   categories = categories.list_for_user(db, User)
+   categories = await categories.list_for_user(db, User)
    total_by_category = {}
    for category in categories:
-       expenses = expenses.list_for_user(db, user, from_date= from_date, to_date=to_date)
+       expenses = await expenses.list_for_user(db, user,category_id = category.id, from_date= from_date, to_date=to_date)
        total_expenditure = sum(expense.amount for expense in expenses)
        total_by_category[f"{category.name}"] = total_expenditure
    return total_by_category    

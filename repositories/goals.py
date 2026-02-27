@@ -14,6 +14,17 @@ async def get_for_user(db: AsyncSession, user: User, goal_id: int) -> Optional[G
     return result.scalars().one_or_none()
 
 
+async def get_latest_for_user(db: AsyncSession, user: User) -> Optional[Goal]:
+    query = (
+        select(Goal)
+        .where(Goal.user_id == user.id)
+        .order_by(Goal.created_at.desc(), Goal.id.desc())
+        .limit(1)
+    )
+    result = await db.execute(query)
+    return result.scalars().first()
+
+
 async def create_goal(db: AsyncSession, user: User, goal_limit: float) -> Goal:
     if goal_limit <= 0:
         raise ValueError("Goal limit has to be greater than 0")

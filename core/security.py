@@ -5,8 +5,10 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import HTTPException, Depends, status 
 from pwdlib import PasswordHash
+from repositories import users as user_repo
+from db.session import get_db
+from fastapi import security
 
 from datetime import datetime, timedelta, timezone
 
@@ -55,28 +57,3 @@ def decode_access_token(token: str):
            headers ={"WWW-Authenticate":"Bearer"}
         )    
 
-
- 
-#Current user dependency
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    payload = decode_access_token(token)
-    username = payload.get("sub")
-    if not username:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Token missing subject",
-                            headers={"WWW-Authenticate" :"Bearer"}
-                            )
- 
-
-    #DB logic to get user by name
-    #BY default User=None
-    user = None
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User does not exist",
-            headers={"WWW-Authenticate":"Bearer"}
-        )
-    
-    return user    
