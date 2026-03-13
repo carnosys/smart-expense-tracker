@@ -10,7 +10,10 @@ class Goal(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key =True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE")) 
-    created_at:Mapped[datetime.datetime] = mapped_column(datetime.datetime, default = datetime.datetime.now(datetime.UTC))  
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.datetime.now(datetime.UTC),
+    )
     goal_limit: Mapped[float] = mapped_column(Float, CheckConstraint("goal_limit > 0"))
 
 

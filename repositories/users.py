@@ -5,7 +5,6 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import Depends
 from typing import Annotated, Optional, Any
 from enum import Enum
-from core.security import password_hash
 from exceptions.users import UserNotFoundError, EmailAlreadyExists
 
 
@@ -71,7 +70,9 @@ async def create(db: AsyncSession, *, username: str, email: str, password_hash: 
 async def update_for_user(db: AsyncSession, user: User, **fields):
     ALLOW_UPDATE_FIELDS = ["username","email","password"]
     if "password" in fields.keys():
-        hashed_password = password_hash(fields["password"])
+        from core.security import hash_password
+
+        hashed_password = hash_password(fields["password"])
         fields["password_hash"] = hashed_password
     for key, value in fields.items():
          if key  not in ALLOW_UPDATE_FIELDS:
