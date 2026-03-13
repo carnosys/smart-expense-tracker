@@ -8,10 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User
 from repositories import expenses as expenses_repo
 from repositories import categories as categories_repo
-
-
-class CategoryDoesNotExist(Exception):
-    """Raised when a referenced category does not belong to the user."""
+from exceptions.expenses import CategoryDoesNotExist
 
 
 MAX_PAGE_SIZE = 100

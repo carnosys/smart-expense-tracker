@@ -1,4 +1,4 @@
-import datetime, UTC
+from datetime import datetime, UTC
 import re
 
 from sqlalchemy import DateTime, Integer, String
@@ -12,7 +12,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(UTC))
 
     def __repr__(self) -> str:
         return (

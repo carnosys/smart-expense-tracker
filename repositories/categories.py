@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, and_, delete
 from typing import List, Optional
+from exceptions.categories import CategoryAlreadyExists
 
 
 
@@ -20,9 +21,6 @@ class Category(Base):
     description: Mapped[str] = mapped_column(Text)
 """
 
-
-class CategoryAlreadyExists(Exception):
-    pass
 
 async def list_for_user(db: AsyncSession, user: User)->List[Category]:
     query = select(Category).where(Category.user_id == user.id).order_by(Category.name)
@@ -83,5 +81,4 @@ async def update_for_user(db: AsyncSession, user: User, category_id : int, **fie
     await db.commit()
     await db.refresh(category)
     return category
-
 

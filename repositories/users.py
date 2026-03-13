@@ -6,6 +6,7 @@ from fastapi import Depends
 from typing import Annotated, Optional, Any
 from enum import Enum
 from core.security import password_hash
+from exceptions.users import UserNotFoundError, EmailAlreadyExists
 
 
 
@@ -30,12 +31,6 @@ FIELD_TO_COLUMN = {
     UserLookupField.EMAIL : User.email,
 }    
 
-class UserNotFoundError(Exception):
-    pass
-
-class EmailAlreadyExists(Exception):
-    pass
-
 async def get_by_field(db: AsyncSession, field: UserLookupField ,value: Any)-> Optional[User]:
     column = FIELD_TO_COLUMN[field]
     query = select(User).where(column == value)
@@ -59,7 +54,7 @@ async def email_exists(db: AsyncSession, email:str)->bool:
         return True    
 
 async def create(db: AsyncSession, *, username: str, email: str, password_hash: str)->Optional[User]:
-   if not await email_exists(db, email):
+   if await email_exists(db, email):
          raise EmailAlreadyExists(f"User with {email} already exists")
    user = User(username=username, email=email, password_hash=password_hash)
 
@@ -76,8 +71,8 @@ async def create(db: AsyncSession, *, username: str, email: str, password_hash: 
 async def update_for_user(db: AsyncSession, user: User, **fields):
     ALLOW_UPDATE_FIELDS = ["username","email","password"]
     if "password" in fields.keys():
-        password_hash = password_hash(fields["password"])
-        fields["password_hash"] = password_hash
+        hashed_password = password_hash(fields["password"])
+        fields["password_hash"] = hashed_password
     for key, value in fields.items():
          if key  not in ALLOW_UPDATE_FIELDS:
              continue
@@ -89,4 +84,3 @@ async def update_for_user(db: AsyncSession, user: User, **fields):
 async def delete_for_user(db:AsyncSession, user: User):
    await db.delete(user)
    await db.commit()
-

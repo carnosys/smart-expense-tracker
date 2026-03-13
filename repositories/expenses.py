@@ -6,9 +6,7 @@ from .categories import get_for_user as get_category_for_user
 from sqlalchemy import select, and_, asc, desc, func
 from datetime import datetime, timedelta, timezone
 from typing import List
-
-class CategoryDoesNotExist(Exception):
-   pass
+from exceptions.expenses import CategoryDoesNotExist
 
 
 def _append_date_filters(filters: list, from_date: datetime = None, to_date: datetime = None) -> list:

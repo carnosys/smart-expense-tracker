@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 from pwdlib import PasswordHash
 from repositories import users as user_repo
 from db.session import get_db
-from fastapi import security
+from fastapi import security, status, HTTPException
 
 from datetime import datetime, timedelta, timezone
 

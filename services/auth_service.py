@@ -6,9 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.security import create_access_token, hash_password, verify_hashed_password, get_current_user
 from models.user import User
 from repositories import users as users_repo
-from repositories.users import EmailAlreadyExists, UserLookupField
-from fastapi import Depends
-from api.depends import get_current_user
+from repositories.users import UserLookupField
+from exceptions.users import EmailAlreadyExists, InvalidCredentials
 
 
 def _validate_registration_input(username: str, email: str, password: str) -> None:
@@ -68,12 +67,11 @@ async def authenticate_user(
 async def login_user(db: AsyncSession, *, email: str, password: str) -> str:
     user = await authenticate_user(db, email=email, password=password)
     if user is None:
-        raise ValueError("Invalid email or password")
+        raise InvalidCredentials("Invalid email or password")
 
     access_token = create_access_token(subject=user.email)
     return access_token
 
 
-async def get_profile(user: User = Depends(get_current_user)):
+async def get_profile(user: User):
     return user
-
