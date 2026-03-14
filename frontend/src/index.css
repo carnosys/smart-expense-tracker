@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --bg: 250 250 250;
+    --surface: 255 255 255;
+    --surface-muted: 244 247 251;
+    --line: 203 213 225;
+    --text: 9 9 11;
+    --muted: 82 82 91;
+    --primary: 37 99 235;
+    --primary-dark: 24 24 27;
+    --success: 5 150 105;
+    --warning: 217 119 6;
+  }
+
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-[rgb(var(--bg))] font-['Plus_Jakarta_Sans'] text-[rgb(var(--text))] antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 22rem),
+      radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 24rem),
+      linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.85));
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  button,
+  [role="button"] {
+    @apply transition-all duration-200;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply border border-white/70 bg-white/70 shadow-[0_18px_60px_-28px_rgba(15,23,42,0.35)] backdrop-blur-xl;
+  }
+
+  .app-shell-grid {
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    background-position: center;
+    background-size: 2.75rem 2.75rem;
+  }
+
+  .metric-mono {
+    @apply font-['IBM_Plex_Mono'] tracking-tight;
+  }
+}
