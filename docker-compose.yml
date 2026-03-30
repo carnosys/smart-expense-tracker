@@ -1,0 +1,42 @@
+name: smart-expense-tracker
+
+services:
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: docker/Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+    restart: unless-stopped  
+    depends_on:
+      - db
+
+  front-end:
+    build:
+      context: ./frontend
+      dockerfile: docker/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    ports:
+      - "5173:80"
+    restart: unless-stopped  
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+
+volumes:
+  db-data: 

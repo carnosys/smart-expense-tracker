@@ -1,12 +1,12 @@
 import os
 import sys
+import asyncio
 from datetime import UTC, datetime
 from pathlib import Path
-from collections.abc import Generator
 from types import SimpleNamespace
 
+import httpx
 import pytest
-from fastapi.testclient import TestClient
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +25,37 @@ from api.depends import get_current_user, get_db
 from app.main import app
 
 
+class SyncASGIClient:
+    def __init__(self, app):
+        self.app = app
+
+    async def _request(self, method: str, url: str, **kwargs):
+        transport = httpx.ASGITransport(app=self.app)
+        async with httpx.AsyncClient(
+            transport=transport,
+            base_url="http://testserver",
+        ) as client:
+            return await client.request(method, url, **kwargs)
+
+    def request(self, method: str, url: str, **kwargs):
+        return asyncio.run(self._request(method, url, **kwargs))
+
+    def get(self, url: str, **kwargs):
+        return self.request("GET", url, **kwargs)
+
+    def post(self, url: str, **kwargs):
+        return self.request("POST", url, **kwargs)
+
+    def patch(self, url: str, **kwargs):
+        return self.request("PATCH", url, **kwargs)
+
+    def put(self, url: str, **kwargs):
+        return self.request("PUT", url, **kwargs)
+
+    def delete(self, url: str, **kwargs):
+        return self.request("DELETE", url, **kwargs)
+
+
 @pytest.fixture
 def db_session() -> object:
     return object()
@@ -41,7 +72,7 @@ def test_user() -> SimpleNamespace:
 
 
 @pytest.fixture
-def client(db_session: object, test_user: SimpleNamespace) -> Generator[TestClient, None, None]:
+def client(db_session: object, test_user: SimpleNamespace) -> SyncASGIClient:
     async def override_get_db():
         yield db_session
 
@@ -51,10 +82,10 @@ def client(db_session: object, test_user: SimpleNamespace) -> Generator[TestClie
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[get_current_user] = override_get_current_user
 
-    with TestClient(app) as test_client:
-        yield test_client
-
-    app.dependency_overrides.clear()
+    try:
+        yield SyncASGIClient(app)
+    finally:
+        app.dependency_overrides.clear()
 
 
 @pytest.fixture

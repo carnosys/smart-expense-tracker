@@ -1,0 +1,29 @@
+name: Endpoint Testing 
+run-name: Endpoint tests on ${{github.ref_name}} by @${{github.actor}}
+on :
+ push:
+  branches: [main]
+ pull_request: 
+  branches: [main]
+
+jobs:
+ run-endpoint-tests:
+  runs-on: ubuntu-latest
+  steps:
+   - uses: actions/checkout@v4
+
+   - name: setup python '3.12.3'
+     uses: actions/setup-python@v5
+     with:
+      python-version: '3.12.3'
+
+   - name: Install dependencies
+     run: pip install --no-cache-dir -r requirements.txt
+     working-directory: backend
+
+   - name: Run tests
+     run: pytest tests/test_auth.py -v
+     working-directory: backend
+
+
+
