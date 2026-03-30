@@ -11,6 +11,26 @@ Smart Expense Tracker is a full-stack personal finance app for tracking expenses
 - Monthly reporting for dashboard and charts
 - Dockerized frontend, backend, and PostgreSQL services
 
+## Screenshots
+
+### Landing Page
+
+The entry point of the app with the main product message and authentication actions.
+
+![Landing Page](./pictures_for_readme/landing_page.png)
+
+### Dashboard
+
+The monthly overview showing spending, budget progress, and high-level insights.
+
+![Dashboard](./pictures_for_readme/dash_board.png)
+
+### Expenses
+
+The core expense management interface for reviewing and tracking transactions.
+
+![Expenses](./pictures_for_readme/expense.png)
+
 ## Tech Stack
 
 ### Frontend
