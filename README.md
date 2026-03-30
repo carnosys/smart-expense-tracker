@@ -1,37 +1,50 @@
 # Smart Expense Tracker
 
-Smart Expense Tracker is a full-stack personal finance app for tracking expenses, organizing categories, setting monthly goals, and reviewing spending trends from a single dashboard.
+Smart Expense Tracker is a production-minded full-stack finance application built with React, FastAPI, PostgreSQL, and Docker. It combines a polished user experience with secure authentication, versioned APIs, database migrations, automated testing, and GitHub Actions CI so the project reads like a real delivery artifact rather than a basic CRUD demo.
 
-## Features
+## Why This Project Stands Out
 
-- JWT-based authentication with register, login, and profile endpoints
-- Expense management with create, list, update, delete, filtering, and pagination
-- Custom spending categories
-- Monthly goal tracking with progress insights
-- Monthly reporting for dashboard and charts
-- Dockerized frontend, backend, and PostgreSQL services
+- Modern React 19 frontend with a clean dashboard, goal tracking, expense workflows, and reporting views
+- FastAPI backend with versioned REST endpoints under `/api/v1`
+- JWT-based authentication with password hashing and protected routes
+- PostgreSQL persistence with Alembic migrations for controlled schema evolution
+- Request ID propagation, request logging, and a health endpoint for operational visibility
+- Dockerized frontend, backend, and database services for consistent local and deployment-ready environments
+- Automated backend and frontend test coverage in the repo
+- GitHub Actions CI that runs endpoint tests on pushes and pull requests to `main`
 
 ## Screenshots
 
 ### Landing Page
 
-The entry point of the app with the main product message and authentication actions.
+Product-facing entry point that frames the app as a serious finance dashboard instead of a generic starter app.
 
-![Landing Page](./pictures_for_readme/landing_page.png)
+![Landing Page](./screenshots/landing_page.png)
 
 ### Dashboard
 
-The monthly overview showing spending, budget progress, and high-level insights.
+High-signal monthly overview with budget progress, recent activity, and decision-ready financial context.
 
-![Dashboard](./pictures_for_readme/dash_board.png)
+![Dashboard](./screenshots/dash_board.png)
 
 ### Expenses
 
-The core expense management interface for reviewing and tracking transactions.
+Core transaction workflow for managing expenses with a UI designed for real usage, not just feature demonstration.
 
-![Expenses](./pictures_for_readme/expense.png)
+![Expenses](./screenshots/expense.png)
 
-## Tech Stack
+## Production-Minded Foundations
+
+This repository is structured like a shippable application:
+
+- Security: JWT token issuance, password hashing, authenticated API access
+- API discipline: explicit route grouping for auth, expenses, categories, goals, and reports
+- Data lifecycle: Alembic-managed schema changes instead of ad hoc database edits
+- Operational basics: `/health` endpoint, request IDs, and request logging middleware
+- Delivery workflow: Dockerized services and CI automation through GitHub Actions
+- Test coverage: backend tests for auth, categories, expenses, goals, reports, migrations, and health checks, plus frontend tests for routing, auth flow, and key pages
+
+## Architecture
 
 ### Frontend
 
@@ -50,21 +63,40 @@ The core expense management interface for reviewing and tracking transactions.
 - PostgreSQL
 - Alembic
 - PyJWT
+- `pwdlib` password hashing
+
+### Infrastructure
+
+- Docker multi-container setup via `docker compose`
+- Nginx-based frontend container
+- Python 3.12 backend container
+- PostgreSQL 17 database service
+- GitHub Actions workflow for endpoint validation
 
 ## Project Structure
 
 ```text
 smart-expense-tracker/
-├── backend/      # FastAPI app, models, services, tests, and migrations
-├── frontend/     # React app, routes, UI components, and feature modules
-├── docs/         # Project planning and supporting documentation
+├── backend/      # FastAPI app, models, services, repositories, tests, and migrations
+├── frontend/     # React app, routes, pages, UI components, and feature modules
+├── screenshots/  # README assets
+├── docs/         # Planning and supporting documentation
 └── docker-compose.yml
 ```
+
+## Feature Set
+
+- User registration, login, and profile retrieval
+- Expense CRUD with filters, sorting, and pagination
+- Category management for cleaner expense organization
+- Monthly goal creation, update, and progress tracking
+- Monthly reporting with charts and summary metrics
+- Dashboard summaries that surface budget and spending signals quickly
 
 ## Quick Start With Docker
 
 1. Create a root `.env` file.
-2. Add the required variables:
+2. Add the required environment variables:
 
 ```env
 POSTGRES_USER=postgres
@@ -75,13 +107,13 @@ JWT_SECRET=change-this-secret
 VITE_API_BASE_URL=http://localhost:8080/api/v1
 ```
 
-3. Start the stack:
+3. Build and run the stack:
 
 ```bash
 docker compose up --build
 ```
 
-4. Open the app:
+4. Access the application:
 
 - Frontend: `http://localhost:5173`
 - Backend API: `http://localhost:8080`
@@ -100,7 +132,7 @@ alembic upgrade head
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
 ```
 
-If you are running PostgreSQL outside Docker, set `POSTGRES_HOST=localhost` in your environment before starting the API.
+If PostgreSQL is running outside Docker, set `POSTGRES_HOST=localhost` before starting the API.
 
 ### Frontend
 
@@ -110,27 +142,38 @@ npm install
 npm run dev
 ```
 
-The frontend expects `VITE_API_BASE_URL` to point to the backend API and falls back to `http://localhost:8080/api/v1`.
+The frontend defaults to `http://localhost:8080/api/v1` when `VITE_API_BASE_URL` is not set.
 
-## Testing
+## Testing and CI
 
-### Backend tests
+### Local test commands
+
+Backend:
 
 ```bash
 cd backend
 pytest
 ```
 
-### Frontend tests
+Frontend:
 
 ```bash
 cd frontend
 npm test
 ```
 
-## API Overview
+### GitHub Actions CI
 
-All API routes are served under `/api/v1`.
+The repository includes a GitHub Actions workflow at `.github/workflows/endpoint_test.yaml` that runs automated endpoint tests on:
+
+- pushes to `main`
+- pull requests targeting `main`
+
+That means the project already has a real CI checkpoint in place, not just local-only test commands.
+
+## API Surface
+
+All backend routes are exposed under `/api/v1`.
 
 ### Authentication
 
@@ -168,7 +211,7 @@ All API routes are served under `/api/v1`.
 
 ## Health Check
 
-The backend exposes a simple health endpoint:
+The backend exposes a lightweight health endpoint:
 
 ```text
 GET /health
@@ -179,3 +222,7 @@ Expected response:
 ```json
 {"health":"ok"}
 ```
+
+## Summary
+
+This project is positioned as a serious full-stack engineering artifact: secure auth, database migrations, containerized services, automated tests, CI integration, operational hooks, and a user-facing interface that goes beyond boilerplate. It is a strong portfolio-grade example of how to build and package a modern expense tracking platform with delivery discipline in mind.
